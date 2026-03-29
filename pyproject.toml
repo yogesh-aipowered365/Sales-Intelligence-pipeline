@@ -1,0 +1,15 @@
+[project]
+name = "sales-intelligence-pipeline"
+version = "1.0.0"
+description = "AI-powered sales intelligence pipeline using Crawl4AI and Azure Foundry"
+requires-python = ">=3.10"
+dependencies = [
+    "crawl4ai",
+    "openai",
+    "pydantic",
+    "python-dotenv",
+    "azure-identity",
+    "azure-ai-projects>=2.0.0",
+    "fastapi",
+    "uvicorn[standard]",
+]

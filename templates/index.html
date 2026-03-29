@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Intelligence Pipeline — AI-Powered 365</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --teal: #00B4C8;
+      --teal-dark: #0096A8;
+      --teal-light: rgba(0, 180, 200, 0.12);
+      --white: #FFFFFF;
+      --text: #0F172A;
+      --text-muted: #5A6A7E;
+      --border: rgba(255, 255, 255, 0.6);
+      --green: #059669;
+      --green-light: #ECFDF5;
+      --red: #DC2626;
+      --red-light: #FEF2F2;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --glass-bg: rgba(255, 255, 255, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.75);
+      --shadow: 0 4px 24px rgba(0, 0, 0, .08);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, .12);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+      color: var(--text);
+      background: #f5ede0;
+      background-image:
+        radial-gradient(ellipse 100% 80% at 0% 0%, #fdf3e3 0%, transparent 55%),
+        radial-gradient(ellipse 80% 60% at 100% 0%, #e8f5f7 0%, transparent 50%),
+        radial-gradient(ellipse 70% 50% at 50% 100%, #fce8d8 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 60%, #d8f0f4 0%, transparent 50%);
+    }
+
+    /* ── FLOATING BLOBS ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #b2eaf0, transparent);
+      top: -100px;
+      left: -150px;
+    }
+
+    .blob-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #fdd5a8, transparent);
+      bottom: -80px;
+      right: -100px;
+    }
+
+    .blob-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #a8e6ef, transparent);
+      top: 40%;
+      left: 60%;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hdr-logo {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #007A8A, #00B4C8);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 10px rgba(0, 180, 200, 0.35);
+      flex-shrink: 0;
+    }
+
+    .hdr-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.3px;
+      color: var(--text);
+    }
+
+    .hdr-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .hdr-badge {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      padding: 5px 14px 5px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #1a1a2e;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Microsoft 4-square icon */
+    .ms-icon {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .ms-icon span {
+      display: block;
+      border-radius: 1px;
+    }
+
+    .ms-r {
+      background: #F25022;
+    }
+
+    .ms-g {
+      background: #7FBA00;
+    }
+
+    .ms-b {
+      background: #00A4EF;
+    }
+
+    .ms-y {
+      background: #FFB900;
+    }
+
+    /* ── LAYOUT ── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 70px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+      animation: fadeUp .35s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── SEARCH HERO ── */
+    .search-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .search-eyebrow {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .search-heading {
+      font-size: 54px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.05;
+    }
+
+    /* 3D glossy teal "in seconds" */
+    .heading-accent {
+      display: block;
+      font-size: 58px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      text-align: center;
+      margin-bottom: 28px;
+      background: linear-gradient(180deg,
+          #80e8f2 0%,
+          #00B4C8 30%,
+          #0096A8 60%,
+          #006878 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 6px rgba(0, 180, 200, 0.3));
+      position: relative;
+    }
+
+    .search-sub {
+      color: var(--text-muted);
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 52px;
+      max-width: 520px;
+      line-height: 1.65;
+      font-weight: 400;
+    }
+
+    /* ── GLASS SEARCH CARD ── */
+    .search-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 36px 40px 34px;
+      box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .search-label {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-row input {
+      flex: 1;
+      padding: 15px 20px;
+      font-size: 15px;
+      font-family: inherit;
+      border: 1.5px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius-sm);
+      outline: none;
+      color: var(--teal);
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      transition: border-color .2s, background .2s, box-shadow .2s;
+    }
+
+    .search-row input:focus {
+      border-color: var(--teal);
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 0 4px rgba(0, 180, 200, 0.1);
+    }
+
+    .search-row input::placeholder {
+      color: var(--teal);
+      opacity: 0.55;
+      font-weight: 400;
+    }
+
+    /* Premium teal gradient Search button */
+    .btn-primary {
+      padding: 15px 32px;
+      background: linear-gradient(135deg, #00c8dc 0%, #00a0b4 50%, #0088a0 100%);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .2s;
+      box-shadow: 0 4px 20px rgba(0, 180, 200, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      letter-spacing: .2px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0, 180, 200, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .search-hint {
+      margin-top: 14px;
+      color: #94A3B8;
+      font-size: 12.5px;
+      text-align: center;
+    }
+
+    /* ── SELECT ── */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      margin-bottom: 28px;
+      transition: all .2s;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text);
+    }
+
+    .select-heading {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+      margin-bottom: 6px;
+    }
+
+    .select-sub {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .company-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 16px;
+    }
+
+    .company-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      cursor: pointer;
+      transition: all .22s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .company-card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 8px 32px rgba(0, 180, 200, 0.2);
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .cc-icon {
+      width: 46px;
+      height: 46px;
+      background: var(--teal-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .cc-name {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .cc-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .cc-url {
+      font-size: 12px;
+      color: var(--teal-dark);
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-select {
+      margin-top: 6px;
+      width: 100%;
+      padding: 10px;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border: 1px solid rgba(0, 180, 200, 0.2);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .company-card:hover .btn-select {
+      background: linear-gradient(135deg, #00c8dc, #0096A8);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    /* ── LOADING ── */
+    .loading-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .loading-company {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--teal-dark);
+      margin-bottom: 48px;
+    }
+
+    .progress-track {
+      display: flex;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .prog-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .prog-step-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: all .35s;
+      box-shadow: var(--shadow);
+    }
+
+    .prog-step.active .prog-step-circle {
+      border-color: var(--teal);
+      background: rgba(0, 180, 200, 0.12);
+      box-shadow: 0 0 0 6px rgba(0, 180, 200, 0.1);
+    }
+
+    .prog-step.done .prog-step-circle {
+      border-color: var(--green);
+      background: var(--green-light);
+    }
+
+    .prog-step-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: color .3s;
+    }
+
+    .prog-step.active .prog-step-label {
+      color: var(--teal-dark);
+    }
+
+    .prog-step.done .prog-step-label {
+      color: var(--green);
+    }
+
+    .prog-connector {
+      width: 80px;
+      height: 2px;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      transition: background .3s;
+    }
+
+    .prog-connector.done {
+      background: var(--green);
+    }
+
+    .loading-msg {
+      color: var(--text-muted);
+      font-size: 14px;
+      min-height: 22px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spinner {
+      width: 26px;
+      height: 26px;
+      border: 3px solid rgba(0, 180, 200, 0.2);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+
+    .inline-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, .4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
+    }
+
+    /* ── BRIEF ── */
+    .brief-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn-ghost {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text);
+    }
+
+    .btn-download {
+      padding: 9px 22px;
+      background: linear-gradient(135deg, #00c8dc, #0096A8);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 180, 200, 0.35);
+      transition: all .2s;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 180, 200, 0.45);
+    }
+
+    /* Brief hero */
+    .brief-hero {
+      background: linear-gradient(135deg, #007A8A 0%, #00B4C8 100%);
+      border-radius: 22px;
+      padding: 42px 48px;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 40px rgba(0, 150, 168, .3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brief-hero::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 240px;
+      height: 240px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 50%;
+    }
+
+    .brief-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      left: -50px;
+      width: 180px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 50%;
+    }
+
+    .brief-company-name {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -.8px;
+      color: #fff;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .brief-industry-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    .brief-what-they-do {
+      font-size: 15.5px;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.88);
+      max-width: 680px;
+      position: relative;
+    }
+
+    .brief-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .brief-grid-1 {
+      grid-template-columns: 1fr;
+    }
+
+    .bcard {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .bcard-header {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    }
+
+    .bcard-icon {
+      font-size: 17px;
+    }
+
+    .bcard-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .blist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .blist li {
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--text);
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .blist li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      color: var(--text);
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 5px 13px;
+      border-radius: 20px;
+      transition: all .15s;
+    }
+
+    .tag:hover {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      color: var(--teal-dark);
+    }
+
+    .nlist {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .nitem {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .nnum {
+      min-width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .ntext {
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--text);
+      padding-top: 4px;
+    }
+
+    .bcard.talking .nnum {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .bcard.talking .bcard-title {
+      color: var(--green);
+    }
+
+    .bcard.questions .nnum {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+    }
+
+    .bcard.questions .bcard-title {
+      color: var(--teal-dark);
+    }
+
+    .bcard.azure-card {
+      background: linear-gradient(135deg, rgba(0, 180, 200, 0.08), rgba(0, 150, 180, 0.06));
+      border-color: rgba(0, 180, 200, 0.25);
+    }
+
+    .bcard.azure-card .bcard-title {
+      color: var(--teal-dark);
+    }
+
+    .bcard.azure-card .azure-text {
+      font-size: 14.5px;
+      line-height: 1.75;
+      color: #005F6B;
+    }
+
+    .error-banner {
+      background: var(--red-light);
+      border: 1px solid #FECACA;
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .error-banner-icon {
+      font-size: 17px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .error-banner-text {
+      font-size: 13.5px;
+      color: #991B1B;
+      line-height: 1.5;
+    }
+
+    .error-banner-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: #991B1B;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 12px 16px;
+      }
+
+      .hdr-badge {
+        display: none;
+      }
+
+      main {
+        padding: 36px 16px 60px;
+      }
+
+      .search-heading {
+        font-size: 36px;
+      }
+
+      .heading-accent {
+        font-size: 40px;
+      }
+
+      .search-card {
+        padding: 28px 20px;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .btn-primary {
+        width: 100%;
+      }
+
+      .brief-hero {
+        padding: 28px 24px;
+      }
+
+      .brief-company-name {
+        font-size: 26px;
+      }
+
+      .brief-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <header>
+    <div class="hdr-logo">🧠</div>
+    <div>
+      <div class="hdr-title">Sales Intelligence Pipeline</div>
+      <div class="hdr-sub">AI-powered company research for sales &amp; presales teams</div>
+    </div>
+    <div class="hdr-badge">
+      <div class="ms-icon">
+        <span class="ms-r"></span><span class="ms-g"></span>
+        <span class="ms-b"></span><span class="ms-y"></span>
+      </div>
+      Microsoft Azure AI
+    </div>
+  </header>
+
+  <main>
+
+    <!-- STEP 1: SEARCH -->
+    <div class="section active" id="section-search">
+      <div class="search-wrap">
+        <div class="search-eyebrow">Sales Intelligence</div>
+        <h1 class="search-heading">Research any company</h1>
+        <span class="heading-accent">in seconds</span>
+        <p class="search-sub">Enter a company name and our AI agent will find their website and build a complete sales
+          brief.</p>
+        <div class="search-card">
+          <label class="search-label" for="search-input">Which company are you looking for?</label>
+          <div class="search-row">
+            <input type="text" id="search-input" placeholder="e.g. NVIDIA, ASML, Adobe, Rio Tinto…"
+              autocomplete="off" />
+            <button class="btn-primary" id="btn-search" onclick="doSearch()">Search</button>
+          </div>
+          <p class="search-hint">Press Enter or click Search to begin</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: SELECT COMPANY -->
+    <div class="section" id="section-select">
+      <button class="back-btn" onclick="goBack()">← Back</button>
+      <h2 class="select-heading">Select a company to proceed</h2>
+      <p class="select-sub" id="select-sub">Choose one to generate a full Sales Brief.</p>
+      <div id="error-area"></div>
+      <div class="company-grid" id="company-grid"></div>
+    </div>
+
+    <!-- STEP 3: LOADING -->
+    <div class="section" id="section-loading">
+      <div class="loading-wrap">
+        <p
+          style="color:var(--text-muted);font-size:12px;margin-bottom:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">
+          Building Brief for</p>
+        <div class="loading-company" id="loading-company"></div>
+        <div class="progress-track">
+          <div class="prog-step" id="ps-crawl">
+            <div class="prog-step-circle" id="ps-crawl-icon">🌐</div>
+            <div class="prog-step-label">Crawling Website</div>
+          </div>
+          <div class="prog-connector" id="pc-1"></div>
+          <div class="prog-step" id="ps-extract">
+            <div class="prog-step-circle" id="ps-extract-icon">🤖</div>
+            <div class="prog-step-label">AI Analysis</div>
+          </div>
+        </div>
+        <p class="loading-msg" id="loading-msg">Initialising…</p>
+      </div>
+    </div>
+
+    <!-- STEP 4: BRIEF -->
+    <div class="section" id="section-brief">
+      <div class="brief-toolbar">
+        <button class="btn-ghost" onclick="showSection('search'); document.getElementById('search-input').value=''">←
+          New Search</button>
+        <button class="btn-download" onclick="downloadMd()">⬇ Download as Markdown</button>
+      </div>
+      <div id="brief-content"></div>
+    </div>
+
+  </main>
+
+  <script>
+    let currentBriefData = null;
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById('section-' + id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function goBack() { document.getElementById('error-area').innerHTML = ''; showSection('search'); }
+    function esc(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+    async function doSearch() {
+      const query = document.getElementById('search-input').value.trim();
+      if (!query) return;
+      const btn = document.getElementById('btn-search');
+      btn.innerHTML = '<span class="inline-spinner"></span>Searching…';
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        if (!data.options?.length) throw new Error('No companies found. Try a different name.');
+        renderOptions(query, data.options);
+        showSection('select');
+      } catch (e) { alert('Search failed: ' + e.message); }
+      finally { btn.innerHTML = 'Search'; btn.disabled = false; }
+    }
+
+    const ICONS = ['🏢', '🏭', '🌍', '🏗️'];
+    function renderOptions(query, options) {
+      document.getElementById('select-sub').textContent = `Found ${options.length} result${options.length > 1 ? 's' : ''} for "${query}". Click one to generate a Sales Brief.`;
+      const grid = document.getElementById('company-grid');
+      grid.innerHTML = '';
+      options.forEach((opt, i) => {
+        const card = document.createElement('div');
+        card.className = 'company-card';
+        card.innerHTML = `<div class="cc-icon">${ICONS[i] || '🏢'}</div><div class="cc-name">${esc(opt.name)}</div><div class="cc-desc">${esc(opt.description || '')}</div><div class="cc-url">${esc(opt.url)}</div><button class="btn-select">Generate Sales Brief →</button>`;
+        card.addEventListener('click', () => startGeneration(opt.url, opt.name));
+        grid.appendChild(card);
+      });
+    }
+
+    function startGeneration(url, name) {
+      showSection('loading');
+      document.getElementById('loading-company').textContent = name;
+      document.getElementById('loading-msg').textContent = 'Initialising…';
+      setProgStep('crawl', 'pending'); setProgStep('extract', 'pending');
+      document.getElementById('pc-1').classList.remove('done');
+      const evtSource = new EventSource(`/api/brief?url=${encodeURIComponent(url)}`);
+      evtSource.onmessage = e => {
+        const msg = JSON.parse(e.data);
+        document.getElementById('loading-msg').textContent = msg.message || '';
+        if (msg.type === 'progress') {
+          if (msg.step === 'crawl') setProgStep('crawl', 'active');
+          if (msg.step === 'crawl_done') { setProgStep('crawl', 'done'); document.getElementById('pc-1').classList.add('done'); }
+          if (msg.step === 'extract') { setProgStep('crawl', 'done'); setProgStep('extract', 'active'); document.getElementById('pc-1').classList.add('done'); }
+        }
+        if (msg.type === 'complete') { evtSource.close(); setProgStep('crawl', 'done'); setProgStep('extract', 'done'); currentBriefData = msg.brief; renderBrief(msg.brief); showSection('brief'); }
+        if (msg.type === 'error') { evtSource.close(); showSection('select'); showError(msg.message); }
+      };
+      evtSource.onerror = () => { evtSource.close(); showSection('select'); showError('Connection lost. Please try again.'); };
+    }
+
+    function setProgStep(step, state) {
+      const el = document.getElementById('ps-' + step);
+      const icon = document.getElementById('ps-' + step + '-icon');
+      el.className = 'prog-step ' + state;
+      const def = { crawl: '🌐', extract: '🤖' };
+      if (state === 'active') icon.innerHTML = '<div class="spinner"></div>';
+      else if (state === 'done') icon.textContent = '✅';
+      else icon.textContent = def[step];
+    }
+
+    function renderBrief(b) {
+      const root = document.getElementById('brief-content');
+      root.innerHTML = '';
+      const hero = el('div', 'brief-hero');
+      hero.innerHTML = `<div class="brief-company-name">${esc(b.company_name || 'Unknown Company')}</div>${b.industry ? `<div class="brief-industry-badge">${esc(b.industry)}</div>` : ''}<div class="brief-what-they-do">${esc(b.what_they_do || '')}</div>`;
+      root.appendChild(hero);
+      const r1 = [];
+      if (b.company_size_signals?.length) r1.push(listCard('🏗️', 'Company Size Signals', b.company_size_signals));
+      if (b.industries_served?.length) r1.push(listCard('🌐', 'Industries Served', b.industries_served));
+      if (r1.length) root.appendChild(grid2(r1));
+      const r2 = [];
+      if (b.recent_news?.length) r2.push(listCard('📰', 'Recent News', b.recent_news));
+      if (b.key_people?.length) r2.push(listCard('👥', 'Key People', b.key_people));
+      if (r2.length) root.appendChild(grid2(r2));
+      if (b.tech_stack_mentions?.length) {
+        const c = bcard('💻', 'Tech Stack Mentions');
+        const tc = el('div', 'tag-cloud');
+        b.tech_stack_mentions.forEach(t => { const tg = el('div', 'tag'); tg.textContent = t; tc.appendChild(tg); });
+        c.appendChild(tc); root.appendChild(grid1([c]));
+      }
+      const r3 = [];
+      if (b.spend_signals?.length) r3.push(listCard('💰', 'Spend Signals', b.spend_signals));
+      if (b.current_challenges?.length) r3.push(listCard('⚠️', 'Current Challenges', b.current_challenges));
+      if (r3.length) root.appendChild(grid2(r3));
+      if (b.talking_points?.length) { const c = bcard('💬', 'Talking Points for First Meeting', 'talking'); c.appendChild(numberedList(b.talking_points)); root.appendChild(grid1([c])); }
+      if (b.open_questions?.length) { const c = bcard('❓', 'Discovery Questions to Ask', 'questions'); c.appendChild(numberedList(b.open_questions)); root.appendChild(grid1([c])); }
+      if (b.azure_relevance) { const c = bcard('☁️', 'Azure Relevance', 'azure-card'); const p = el('p', 'azure-text'); p.textContent = b.azure_relevance; c.appendChild(p); root.appendChild(grid1([c])); }
+    }
+
+    function el(tag, cls) { const d = document.createElement(tag); if (cls) d.className = cls; return d; }
+    function bcard(icon, title, extra = '') { const c = el('div', 'bcard ' + extra); const h = el('div', 'bcard-header'); h.innerHTML = `<span class="bcard-icon">${icon}</span><span class="bcard-title">${title}</span>`; c.appendChild(h); return c; }
+    function listCard(icon, title, items) { const c = bcard(icon, title); const ul = el('ul', 'blist'); items.forEach(i => { const li = document.createElement('li'); li.textContent = i; ul.appendChild(li); }); c.appendChild(ul); return c; }
+    function numberedList(items) { const w = el('div', 'nlist'); items.forEach((item, i) => { const row = el('div', 'nitem'); row.innerHTML = `<div class="nnum">${i + 1}</div><div class="ntext">${esc(item)}</div>`; w.appendChild(row); }); return w; }
+    function grid2(children) { const g = el('div', 'brief-grid'); if (children.length === 1) g.style.gridTemplateColumns = '1fr'; children.forEach(c => g.appendChild(c)); return g; }
+    function grid1(children) { const g = el('div', 'brief-grid brief-grid-1'); children.forEach(c => g.appendChild(c)); return g; }
+    function showError(message) { const area = document.getElementById('error-area'); const b = el('div', 'error-banner'); b.innerHTML = `<span class="error-banner-icon">⚠️</span><span class="error-banner-text">${esc(message)}</span><button class="error-banner-close" onclick="this.parentElement.remove()">✕</button>`; area.prepend(b); }
+
+    function downloadMd() {
+      if (!currentBriefData) return;
+      const b = currentBriefData;
+      const lines = [];
+      const add = t => lines.push(t);
+      const list = arr => { arr.forEach(i => add(`- ${i}`)); add(''); };
+      const num = arr => { arr.forEach((i, n) => add(`${n + 1}. ${i}`)); add(''); };
+      add(`# Sales Intelligence Brief: ${b.company_name || 'Unknown'}\n`);
+      add(`## What They Do\n${b.what_they_do || ''}\n`);
+      add(`## Industry\n${b.industry || ''}\n`);
+      if (b.company_size_signals?.length) { add('## Company Size Signals'); list(b.company_size_signals); }
+      if (b.industries_served?.length) { add('## Industries Served'); list(b.industries_served); }
+      if (b.recent_news?.length) { add('## Recent News'); list(b.recent_news); }
+      if (b.key_people?.length) { add('## Key People'); list(b.key_people); }
+      if (b.tech_stack_mentions?.length) { add('## Tech Stack Mentions'); list(b.tech_stack_mentions); }
+      if (b.spend_signals?.length) { add('## Spend Signals'); list(b.spend_signals); }
+      if (b.current_challenges?.length) { add('## Current Challenges'); list(b.current_challenges); }
+      if (b.talking_points?.length) { add('## Talking Points for First Meeting'); num(b.talking_points); }
+      if (b.open_questions?.length) { add('## Discovery Questions'); num(b.open_questions); }
+      if (b.azure_relevance) { add(`## Azure Relevance\n${b.azure_relevance}\n`); }
+      const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${(b.company_name || 'brief').toLowerCase().replace(/\s+/g, '_')}_sales_brief.md`;
+      a.click();
+    }
+  </script>
+</body>
+
+</html>
